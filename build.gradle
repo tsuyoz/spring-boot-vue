@@ -1,0 +1,54 @@
+plugins {
+    id "org.springframework.boot" version "2.5.4"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "org.jetbrains.kotlin.jvm" version "1.5.30"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.5.30"
+    id "com.github.node-gradle.node" version "3.1.0" // (1) Gradle Plugin for Nodeを追加
+}
+
+group = "com.example"
+version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_16
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "16"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "16"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// (2)
+node {
+    version = "14.17.6" // Node.jsのバージョン
+    npmVersion = "7.13.0" // npmのバージョン
+    download = true // Node.js, npmのランタイムをダウンロードするか
+    workDir = file("${project.projectDir}/node_runtimes/nodejs")
+    npmWorkDir = file("${project.projectDir}/node_runtimes/npm")
+    nodeModulesDir = file("${project.projectDir}")
+}
+
+// (3)
+processResources.dependsOn npm_run_build
